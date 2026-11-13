@@ -38,10 +38,22 @@ echo "================================================"
 echo "[1/6] Cleaning old artifacts and building Universal binary (arm64 + x86_64)..."
 cd Stickurr
 rm -rf .build
-swift build -c release --arch arm64 --arch x86_64
+swift build -c release --arch arm64
+swift build -c release --arch x86_64
 cd ..
 
-BINARY_PATH=$(cd Stickurr && swift build -c release --arch arm64 --arch x86_64 --show-bin-path)/$APP_NAME
+ARM64_BIN="Stickurr/.build/arm64-apple-macosx/release/$APP_NAME"
+X86_BIN="Stickurr/.build/x86_64-apple-macosx/release/$APP_NAME"
+
+if [ ! -f "$ARM64_BIN" ] || [ ! -f "$X86_BIN" ]; then
+    echo "Error: Build failed! One or more architecture binaries not found."
+    exit 1
+fi
+
+UNIVERSAL_DIR=".build/universal"
+mkdir -p "$UNIVERSAL_DIR"
+BINARY_PATH="$UNIVERSAL_DIR/$APP_NAME"
+lipo -create -output "$BINARY_PATH" "$ARM64_BIN" "$X86_BIN"
 
 if [ ! -f "$BINARY_PATH" ]; then
     echo "Error: Build failed! Binary not found at $BINARY_PATH"
