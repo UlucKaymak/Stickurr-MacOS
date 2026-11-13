@@ -35,13 +35,13 @@ echo "      Version: $VERSION"
 echo "================================================"
 
 # 1. Clean and Build
-echo "[1/6] Cleaning old artifacts and building arm64..."
+echo "[1/6] Cleaning old artifacts and building Universal binary (arm64 + x86_64)..."
 cd Stickurr
 rm -rf .build
-swift build -c release --arch arm64 
+swift build -c release --arch arm64 --arch x86_64
 cd ..
 
-BINARY_PATH=$(cd Stickurr && swift build -c release --arch arm64 --show-bin-path)/$APP_NAME
+BINARY_PATH=$(cd Stickurr && swift build -c release --arch arm64 --arch x86_64 --show-bin-path)/$APP_NAME
 
 if [ ! -f "$BINARY_PATH" ]; then
     echo "Error: Build failed! Binary not found at $BINARY_PATH"
